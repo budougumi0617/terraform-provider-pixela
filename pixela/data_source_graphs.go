@@ -13,6 +13,25 @@ import (
 )
 
 func dataSourceGraphs() *schema.Resource {
+	/**
+	 * Example JSON
+	  {
+	    "graphs": [
+	      {
+	        "id": "egiu",
+	        "name": "English grammar in use",
+	        "unit": "unit",
+	        "type": "int",
+	        "color": "ajisai",
+	        "timezone": "Asia/Tokyo",
+	        "purgeCacheURLs": null,
+	        "selfSufficient": "none",
+	        "isSecret": true,
+	        "publishOptionalData": false
+	      }
+	    ]
+	  }
+	*/
 	return &schema.Resource{
 		ReadContext: dataSourceGraphsRead,
 		Schema: map[string]*schema.Schema{
@@ -46,19 +65,23 @@ func dataSourceGraphs() *schema.Resource {
 							Computed:         true,
 						},
 						"purgeCacheURLs": &schema.Schema{
-							Type:             schema.TypeString,
+							Type:             schema.TypeList,
 							Computed:         true,
+							Elem: &schema.Schema{
+								Type:             schema.TypeString,
+								Computed:         true,
+							},
 						},
 						"selfSufficient": &schema.Schema{
 							Type:             schema.TypeString,
 							Computed:         true,
 						},
 						"isSecret": &schema.Schema{
-							Type:             schema.TypeString,
+							Type:             schema.TypeBool,
 							Computed:         true,
 						},
 						"publishOptionalData": &schema.Schema{
-							Type:             schema.TypeString,
+							Type:             schema.TypeBool,
 							Computed:         true,
 						},
 					},
@@ -67,26 +90,6 @@ func dataSourceGraphs() *schema.Resource {
 		},
 	}
 }
-
-/**
-{
-  "graphs": [
-    {
-      "id": "egiu",
-      "name": "English grammar in use",
-      "unit": "unit",
-      "type": "int",
-      "color": "ajisai",
-      "timezone": "Asia/Tokyo",
-      "purgeCacheURLs": null,
-      "selfSufficient": "none",
-      "isSecret": true,
-      "publishOptionalData": false
-    }
-  ]
-}
-
- */
 
 func dataSourceGraphsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := &http.Client{Timeout: 10 * time.Second}
