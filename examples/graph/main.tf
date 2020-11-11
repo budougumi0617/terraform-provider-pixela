@@ -24,6 +24,6 @@ output "egiu" {
   value = {
     for graph in data.pixela_graphs.all.graphs :
     graph.id => graph
-    if graphh.name == var.graph_name
+    if graph.name == var.graph_name
   }
 }
