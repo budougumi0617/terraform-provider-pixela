@@ -2,8 +2,7 @@ package pixela
 
 import (
 	"context"
-	"strconv"
-	"time"
+	"fmt"
 
 	pixela "github.com/ebc-2in2crc/pixela4go"
 
@@ -34,7 +33,11 @@ func dataSourceGraphs() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGraphsRead,
 		Schema: map[string]*schema.Schema{
-			"graphs": &schema.Schema{
+			"id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"graphs": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -98,15 +101,44 @@ func dataSourceGraphsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	result, err := client.Graph().GetAll()
 	if err != nil {
 		return diag.FromErr(err)
-		})
 	}
 
-	if err := d.Set("graphs", result.Graphs); err != nil {
+	graphs := flattenGraphsData(&result.Graphs)
+	if err := d.Set("graphs", graphs); err != nil {
 		return diag.FromErr(err)
 	}
 
 	// always run
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId(fmt.Sprintf("%s/graphs", client.UserName))
 
 	return diags
+}
+
+// to manual mapping because terraform cannot use camel case fields.
+// Pixela responses has it.
+func flattenGraphsData(graphs *[]pixela.GraphDefinition) []interface{} {
+	if graphs != nil {
+		gs := make([]interface{}, len(*graphs), len(*graphs))
+
+		for i, graph := range *graphs {
+			g := make(map[string]interface{})
+			g["id"] = graph.ID
+			g["name"] = graph.Name
+			g["unit"] = graph.Unit
+			g["type"] = graph.Type
+			g["color"] = graph.Color
+			g["timezone"] = graph.TimeZone
+			// below fields is used camel case in json tags.
+			g["purge_cache_urls"] = graph.PurgeCacheURLs
+			g["self_sufficient"] = graph.SelfSufficient
+			g["is_secret"] = graph.IsSecret
+			g["publish_optional_data"] = graph.PublishOptionalData
+
+			gs[i] = g
+		}
+
+		return gs
+	}
+
+	return make([]interface{}, 0)
 }
