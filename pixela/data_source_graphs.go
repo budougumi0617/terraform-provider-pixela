@@ -98,6 +98,7 @@ func dataSourceGraphsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	result, err := client.Graph().GetAll()
 	if err != nil {
 		return diag.FromErr(err)
+		})
 	}
 
 	if err := d.Set("graphs", result.Graphs); err != nil {
