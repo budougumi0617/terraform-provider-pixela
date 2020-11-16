@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	pixela "github.com/ebc-2in2crc/pixela4go"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -42,46 +41,46 @@ func dataSourceGraphs() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"id": &schema.Schema{
+						"id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"name": &schema.Schema{
+						"name": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"unit": &schema.Schema{
+						"unit": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"type": &schema.Schema{
+						"type": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"color": &schema.Schema{
+						"color": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"timezone": &schema.Schema{
+						"timezone": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"purge_cache_urls": &schema.Schema{
+						"purge_cache_urls": {
 							Type:     schema.TypeList,
 							Computed: true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
 						},
-						"self_sufficient": &schema.Schema{
+						"self_sufficient": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"is_secret": &schema.Schema{
+						"is_secret": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-						"publish_optional_data": &schema.Schema{
+						"publish_optional_data": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},

@@ -7,13 +7,11 @@ import (
 
 	pixela "github.com/ebc-2in2crc/pixela4go"
 	"github.com/google/go-cmp/cmp"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 )
 
 func Test_dataSourceGraphsRead(t *testing.T) {
-
-	tests := []struct {
+	tests := [...]struct {
 		name string
 		want diag.Diagnostics
 	}{
@@ -29,7 +27,6 @@ func Test_dataSourceGraphsRead(t *testing.T) {
 			t.SkipNow()
 		}
 		t.Run(tt.name, func(t *testing.T) {
-
 			m := pixela.New(usename, token)
 			d := dataSourceGraphs().TestResourceData()
 			got := dataSourceGraphsRead(context.TODO(), d, m)

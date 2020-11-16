@@ -50,5 +50,4 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 	}
 
 	return pixela.New(un, token), diag.Diagnostics{}
-
 }
