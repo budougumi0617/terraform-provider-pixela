@@ -1,5 +1,9 @@
 name: test
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    paths:
+      - master
 jobs:
   test:
     strategy:
@@ -25,4 +29,4 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: go mod download
     - name: Run tests
-      run: go test -v -covermode=atomic
+      run: go test -v -covermode=atomic ./...

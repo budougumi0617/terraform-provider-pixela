@@ -16,5 +16,9 @@ module graph {
 }
 
 output egiu {
-  value = module.graph.egiu
+  value = module.graph.a_graph
+}
+
+output all {
+  value = module.graph.all_graphs
 }

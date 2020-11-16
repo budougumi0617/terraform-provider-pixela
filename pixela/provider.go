@@ -40,12 +40,12 @@ func Provider() *schema.Provider {
 
 func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	un := d.Get("username").(string)
-	if un != "" {
+	if un == "" {
 		return nil, diag.FromErr(fmt.Errorf("not find username"))
 	}
 
 	token := d.Get("token").(string)
-	if token != "" {
+	if token == "" {
 		return nil, diag.FromErr(fmt.Errorf("not find token"))
 	}
 
