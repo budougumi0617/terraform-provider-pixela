@@ -12,7 +12,7 @@ provider pixela {
 }
 
 resource "pixela_graph" "sample" {
-  graph_id                    = "sample"
+  graph_id              = "sample"
   name                  = "sample from terraform"
   unit                  = "page"
   type                  = "int"

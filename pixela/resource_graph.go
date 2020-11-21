@@ -33,6 +33,11 @@ func resourceGraph() *schema.Resource {
 		   }
 		*/
 		Schema: map[string]*schema.Schema{
+			"last_updated": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
 			"graph_id": {
 				Type:     schema.TypeString,
 				Required: true,
