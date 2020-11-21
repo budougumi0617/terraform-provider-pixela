@@ -30,7 +30,9 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("PIXELA_TOKEN", nil),
 			},
 		},
-		ResourcesMap: map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"pixela_graph": resourceGraph(),
+		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"pixela_graphs": dataSourceGraphs(),
 		},
@@ -50,5 +52,4 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 	}
 
 	return pixela.New(un, token), diag.Diagnostics{}
-
 }
