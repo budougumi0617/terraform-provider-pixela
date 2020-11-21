@@ -166,8 +166,31 @@ func resourceGraphRead(ctx context.Context, d *schema.ResourceData, m interface{
 		return diag.FromErr(fmt.Errorf("cannot find graph %q", gid))
 	}
 
-	graph := flattenGraph(g)
-	if err := d.Set("graph", graph); err != nil {
+	if err := d.Set("graph_id", g.ID); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("name", g.Name); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("type", g.Type); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("unit", g.Unit); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("color", g.Color); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("timezone", g.TimeZone); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("self_sufficient", g.SelfSufficient); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("is_secret", g.IsSecret); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("publish_optional_data", g.PublishOptionalData); err != nil {
 		return diag.FromErr(err)
 	}
 	return diags
