@@ -3,6 +3,7 @@ package pixela
 import (
 	"context"
 	"fmt"
+	"time"
 
 	pixela "github.com/ebc-2in2crc/pixela4go"
 
@@ -165,7 +166,6 @@ func resourceGraphRead(ctx context.Context, d *schema.ResourceData, m interface{
 	if !found {
 		return diag.FromErr(fmt.Errorf("cannot find graph %q", gid))
 	}
-
 	if err := d.Set("graph_id", g.ID); err != nil {
 		return diag.FromErr(err)
 	}
@@ -197,6 +197,47 @@ func resourceGraphRead(ctx context.Context, d *schema.ResourceData, m interface{
 }
 
 func resourceGraphUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*pixela.Client)
+
+	if d.HasChange("graph_id") {
+		return diag.Errorf("cannot support update graph_id")
+	}
+	if d.HasChange("type") {
+		return diag.Errorf("cannot support update type")
+	}
+
+	if d.HasChange("name") || d.HasChange("unit") ||
+		d.HasChange("color") || d.HasChange("timezone") ||
+		d.HasChange("self_sufficient") || d.HasChange("is_secret") ||
+		d.HasChange("publish_optional_data") {
+		id := d.Get("graph_id").(string)
+		name := d.Get("name").(string)
+		unit := d.Get("unit").(string)
+		// TODO: validate color type
+		color := d.Get("color").(string)
+		timezone := d.Get("timezone").(string)
+		selfSufficient := d.Get("self_sufficient").(string)
+		is := d.Get("is_secret").(bool)
+		pod := d.Get("publish_optional_data").(bool)
+
+		_, err := c.Graph().Update(&pixela.GraphUpdateInput{
+			ID:       String(id),
+			Name:     String(name),
+			Unit:     String(unit),
+			Color:    String(color),
+			TimeZone: String(timezone),
+			// PurgeCacheURLs:      nil,
+			SelfSufficient:      String(selfSufficient),
+			IsSecret:            Bool(is),
+			PublishOptionalData: Bool(pod),
+		})
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		d.Set("last_updated", time.Now().Format(time.RFC850))
+	}
+
 	return resourceGraphRead(ctx, d, m)
 }
 
