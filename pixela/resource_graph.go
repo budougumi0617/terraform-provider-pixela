@@ -242,8 +242,24 @@ func resourceGraphUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func resourceGraphDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*pixela.Client)
+
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
+
+	graphID := d.Id()
+
+	r, err := c.Graph().Delete(&pixela.GraphDeleteInput{ID: String(graphID)})
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !r.IsSuccess {
+		return diag.Errorf("destroy failed %q", r.Message)
+	}
+
+	// d.SetId("") is automatically called assuming delete returns no errors, but
+	// it is added here for explicitness.
+	d.SetId("")
 
 	return diags
 }
