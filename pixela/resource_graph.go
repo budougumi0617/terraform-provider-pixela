@@ -88,24 +88,7 @@ func resourceGraph() *schema.Resource {
 	}
 }
 
-func flattenGraph(graph pixela.GraphDefinition) interface{} {
-	g := make(map[string]interface{})
-	g["graph_id"] = graph.ID
-	g["name"] = graph.Name
-	g["unit"] = graph.Unit
-	g["type"] = graph.Type
-	g["color"] = graph.Color
-	g["timezone"] = graph.TimeZone
-	// below fields is used camel case in json tags.
-	//g["purge_cache_urls"] = graph.PurgeCacheURLs
-	g["self_sufficient"] = graph.SelfSufficient
-	g["is_secret"] = graph.IsSecret
-	g["publish_optional_data"] = graph.PublishOptionalData
-
-	return g
-}
-
-func resourceGraphCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGraphCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 	client := m.(*pixela.Client)
@@ -122,15 +105,15 @@ func resourceGraphCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	pod := d.Get("publish_optional_data").(bool)
 
 	result, err := client.Graph().Create(&pixela.GraphCreateInput{
-		ID:                  String(id),
-		Name:                String(name),
-		Unit:                String(unit),
-		Type:                String(gtype),
-		Color:               String(color),
-		TimeZone:            String(timezone),
-		SelfSufficient:      String(selfSufficient),
-		IsSecret:            Bool(is),
-		PublishOptionalData: Bool(pod),
+		ID:                  pixela.String(id),
+		Name:                pixela.String(name),
+		Unit:                pixela.String(unit),
+		Type:                pixela.String(gtype),
+		Color:               pixela.String(color),
+		TimeZone:            pixela.String(timezone),
+		SelfSufficient:      pixela.String(selfSufficient),
+		IsSecret:            pixela.Bool(is),
+		PublishOptionalData: pixela.Bool(pod),
 	})
 	if err != nil {
 		return diag.FromErr(err)
@@ -142,7 +125,7 @@ func resourceGraphCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func resourceGraphRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGraphRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 	client := m.(*pixela.Client)
@@ -221,27 +204,29 @@ func resourceGraphUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 		pod := d.Get("publish_optional_data").(bool)
 
 		_, err := c.Graph().Update(&pixela.GraphUpdateInput{
-			ID:       String(id),
-			Name:     String(name),
-			Unit:     String(unit),
-			Color:    String(color),
-			TimeZone: String(timezone),
+			ID:       pixela.String(id),
+			Name:     pixela.String(name),
+			Unit:     pixela.String(unit),
+			Color:    pixela.String(color),
+			TimeZone: pixela.String(timezone),
 			// PurgeCacheURLs:      nil,
-			SelfSufficient:      String(selfSufficient),
-			IsSecret:            Bool(is),
-			PublishOptionalData: Bool(pod),
+			SelfSufficient:      pixela.String(selfSufficient),
+			IsSecret:            pixela.Bool(is),
+			PublishOptionalData: pixela.Bool(pod),
 		})
 		if err != nil {
 			return diag.FromErr(err)
 		}
 
-		d.Set("last_updated", time.Now().Format(time.RFC850))
+		if err := d.Set("last_updated", time.Now().Format(time.RFC850)); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return resourceGraphRead(ctx, d, m)
 }
 
-func resourceGraphDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGraphDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*pixela.Client)
 
 	// Warning or errors can be collected in a slice type
@@ -249,7 +234,7 @@ func resourceGraphDelete(ctx context.Context, d *schema.ResourceData, m interfac
 
 	graphID := d.Id()
 
-	r, err := c.Graph().Delete(&pixela.GraphDeleteInput{ID: String(graphID)})
+	r, err := c.Graph().Delete(&pixela.GraphDeleteInput{ID: pixela.String(graphID)})
 	if err != nil {
 		return diag.FromErr(err)
 	}
