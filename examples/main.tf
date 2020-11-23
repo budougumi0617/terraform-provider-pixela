@@ -1,14 +1,14 @@
 terraform {
   required_providers {
     pixela = {
-      versions = ["0.1"]
+      versions = ["0.0.1"]
       source   = "github.com/budougumi0617/pixela"
     }
   }
 }
 
 provider pixela {
-  version = "0.1.0"
+  version = "0.0.1"
 }
 
 resource "pixela_graph" "sample" {
