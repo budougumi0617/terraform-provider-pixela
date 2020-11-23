@@ -27,7 +27,7 @@ Use the navigation to the left to read about the available resources.
 terraform {
   required_providers {
     pixela = {
-      versions = ">= 0.0.3"
+      versions = ">= 0.0.4"
       source   = "budougumi0617/pixela"
     }
   }
