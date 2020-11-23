@@ -19,9 +19,8 @@ func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"username": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("PIXELA_USERNAME", nil),
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"token": {
 				Type:        schema.TypeString,
