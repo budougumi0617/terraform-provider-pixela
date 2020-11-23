@@ -1,17 +1,19 @@
 terraform {
   required_providers {
     pixela = {
-      versions = ">= 0.0.1"
+      versions = ["0.0.3"]
       source   = "github.com/budougumi0617/pixela"
     }
   }
 }
 
-provider pixela {}
+provider pixela {
+  username = "budougumi0617"
+}
 
 resource "pixela_graph" "sample" {
   graph_id              = "sample"
-  name                  = "sample from terraform"
+  name                  = "update from terraform"
   unit                  = "page"
   type                  = "int"
   color                 = "ajisai"
@@ -21,16 +23,6 @@ resource "pixela_graph" "sample" {
   publish_optional_data = false
 }
 
-module graph {
-  source = "./graph"
-
-  graph_name = "egiu"
-}
-
-output egiu {
-  value = module.graph.a_graph
-}
-
-output all {
-  value = module.graph.all_graphs
+output sample {
+  value = pixela_graph.sample.graph_id
 }
