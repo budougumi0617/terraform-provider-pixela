@@ -2,7 +2,7 @@
 
 The pixelation graph definition. 
 
-~> Please set the environment values `PIXELA_USERNAME` and `PIXELA_TOKEN`, before each `terraform` command.
+~> Please set the environment value `PIXELA_TOKEN`, before each `terraform` command.
 
 ## Example Usage
 

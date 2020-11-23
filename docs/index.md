@@ -11,9 +11,10 @@ Please set below environment values before each `terraform` command.
 
 |Key|Value|
 |---|---|
-|`PIXELA_USERNAME`|Created user name by [POST - /v1/users][post_user]
-|`PIXELA_TOKEN`|A token string used to authenticate as `PIXELA_USERNAME`|
+|`PIXELA_TOKEN`|A token string used to authenticate as `username`|
 
+`PIXELA_TOKEN` is a token for the created pixela user.
+Related pixela endpoint is [POST - /v1/users][post_user]
 
 [post_user]: https://docs.pixe.la/entry/post-user
 
@@ -26,13 +27,15 @@ Use the navigation to the left to read about the available resources.
 terraform {
   required_providers {
     pixela = {
-      versions = ">= 0.0.1"
-      source   = "github.com/budougumi0617/pixela"
+      versions = ">= 0.0.3"
+      source   = "budougumi0617/pixela"
     }
   }
 }
 
-provider pixela {}
+provider pixela {
+  username = "PIXELA_USERNAME"
+}
 
 resource "pixela_graph" "sample" {
   graph_id              = "sample"
