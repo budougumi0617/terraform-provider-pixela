@@ -3,7 +3,7 @@ HOSTNAME=github.com
 NAMESPACE=budougumi0617
 NAME=pixela
 BINARY=terraform-provider-${NAME}
-VERSION=0.0.3
+VERSION=0.0.4
 OS_ARCH=darwin_amd64
 
 default: install
