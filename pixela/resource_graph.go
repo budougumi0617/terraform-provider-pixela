@@ -130,24 +130,9 @@ func resourceGraphRead(_ context.Context, d *schema.ResourceData, m interface{})
 	var diags diag.Diagnostics
 	client := m.(*pixela.Client)
 
-	// FIXME: pixela api cannot get a graph.
-	result, err := client.Graph().GetAll()
+	g, err := client.Graph().Get(&pixela.GraphGetInput{ID: pixela.String(d.Id())})
 	if err != nil {
 		return diag.FromErr(err)
-	}
-
-	var g pixela.GraphDefinition
-	var found bool
-	gid := d.Id()
-	for _, graph := range result.Graphs {
-		if graph.ID == gid {
-			g = graph
-			found = true
-			break
-		}
-	}
-	if !found {
-		return diag.FromErr(fmt.Errorf("cannot find graph %q", gid))
 	}
 	if err := d.Set("graph_id", g.ID); err != nil {
 		return diag.FromErr(err)
