@@ -6,11 +6,9 @@ import (
 	"testing"
 
 	pixela "github.com/ebc-2in2crc/pixela4go"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccPixelaGraph_basic(t *testing.T) {
@@ -26,12 +24,6 @@ func testAccPreCheck(t *testing.T) {
 	if os.Getenv("PIXELA_TOKEN") == "" {
 		t.Fatal("PIXELA_TOKEN must be set for acceptance tests")
 	}
-}
-
-var testAccProviderFactories = map[string]func() (*schema.Provider, error){
-	"pixela": func() (*schema.Provider, error) {
-		return testAccProvider, nil
-	},
 }
 
 // testAccCheckPixelaGraphDestroy verifies the Widget has been destroyed

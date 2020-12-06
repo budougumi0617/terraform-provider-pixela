@@ -2,12 +2,14 @@ package pixela
 
 import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-var testAccProviders map[string]*schema.Provider
 var testAccProvider *schema.Provider
+var testAccProviderFactories map[string]func() (*schema.Provider, error)
 
 func init() {
 	testAccProvider = Provider()
-	testAccProviders = map[string]*schema.Provider{
-		"pixela": testAccProvider,
+	testAccProviderFactories = map[string]func() (*schema.Provider, error){
+		"pixela": func() (*schema.Provider, error) {
+			return testAccProvider, nil
+		},
 	}
 }
