@@ -30,3 +30,7 @@ jobs:
       run: go mod download
     - name: Run tests
       run: go test -v -covermode=atomic ./...
+    - name: Run Acceptance tests
+      run: make testacc
+      env:
+        PIXELA_TOKEN: ${{ secrets.PIXELA_TOKEN }}
