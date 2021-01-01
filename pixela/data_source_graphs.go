@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	pixela "github.com/ebc-2in2crc/pixela4go"
+	"github.com/budougumi0617/pixela"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -97,12 +97,12 @@ func dataSourceGraphsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	result, err := client.Graph().GetAll()
+	gs, err := client.GetGraphs(ctx)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	graphs := flattenGraphsData(&result.Graphs)
+	graphs := flattenGraphsData(gs)
 	if err := d.Set("graphs", graphs); err != nil {
 		return diag.FromErr(err)
 	}
@@ -115,11 +115,11 @@ func dataSourceGraphsRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 // to manual mapping because terraform cannot use camel case fields.
 // Pixela responses has it.
-func flattenGraphsData(graphs *[]pixela.GraphDefinition) []interface{} {
+func flattenGraphsData(graphs []*pixela.GraphDefinition) []interface{} {
 	if graphs != nil {
-		gs := make([]interface{}, len(*graphs), len(*graphs))
+		gs := make([]interface{}, len(graphs), len(graphs))
 
-		for i, graph := range *graphs {
+		for i, graph := range graphs {
 			g := make(map[string]interface{})
 			g["id"] = graph.ID
 			g["name"] = graph.Name
