@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	pixela "github.com/ebc-2in2crc/pixela4go"
+	"github.com/budougumi0617/pixela"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 )

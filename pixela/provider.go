@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	pixela "github.com/ebc-2in2crc/pixela4go"
+	"github.com/budougumi0617/pixela"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )

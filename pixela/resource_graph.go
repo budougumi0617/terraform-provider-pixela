@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	pixela "github.com/ebc-2in2crc/pixela4go"
+	"github.com/budougumi0617/pixela"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -88,7 +88,7 @@ func resourceGraph() *schema.Resource {
 	}
 }
 
-func resourceGraphCreate(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGraphCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 	client := m.(*pixela.Client)
@@ -104,17 +104,17 @@ func resourceGraphCreate(_ context.Context, d *schema.ResourceData, m interface{
 	is := d.Get("is_secret").(bool)
 	pod := d.Get("publish_optional_data").(bool)
 
-	result, err := client.Graph().Create(&pixela.GraphCreateInput{
-		ID:                  pixela.String(id),
-		Name:                pixela.String(name),
-		Unit:                pixela.String(unit),
-		Type:                pixela.String(gtype),
-		Color:               pixela.String(color),
-		TimeZone:            pixela.String(timezone),
-		SelfSufficient:      pixela.String(selfSufficient),
-		IsSecret:            pixela.Bool(is),
-		PublishOptionalData: pixela.Bool(pod),
-	})
+	result, err := client.CreateGraph(ctx,
+		pixela.GraphID(id),
+		name,
+		unit,
+		pixela.GraphType(gtype),
+		pixela.GraphColor(color),
+		pixela.TimeZone(timezone),
+		pixela.SelfSufficient(pixela.SelfSufficientType(selfSufficient)),
+		pixela.IsSecret(is),
+		pixela.PublishOptionalData(pod),
+	)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -125,12 +125,12 @@ func resourceGraphCreate(_ context.Context, d *schema.ResourceData, m interface{
 	return diags
 }
 
-func resourceGraphRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGraphRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 	client := m.(*pixela.Client)
 
-	g, err := client.Graph().Get(&pixela.GraphGetInput{ID: pixela.String(d.Id())})
+	g, err := client.GetGraph(ctx, pixela.GraphID(d.Id()))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -181,24 +181,25 @@ func resourceGraphUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 		id := d.Get("graph_id").(string)
 		name := d.Get("name").(string)
 		unit := d.Get("unit").(string)
+		gtype := d.Get("type").(string)
 		// TODO: validate color type
 		color := d.Get("color").(string)
 		timezone := d.Get("timezone").(string)
 		selfSufficient := d.Get("self_sufficient").(string)
 		is := d.Get("is_secret").(bool)
 		pod := d.Get("publish_optional_data").(bool)
-
-		_, err := c.Graph().Update(&pixela.GraphUpdateInput{
-			ID:       pixela.String(id),
-			Name:     pixela.String(name),
-			Unit:     pixela.String(unit),
-			Color:    pixela.String(color),
-			TimeZone: pixela.String(timezone),
-			// PurgeCacheURLs:      nil,
-			SelfSufficient:      pixela.String(selfSufficient),
-			IsSecret:            pixela.Bool(is),
-			PublishOptionalData: pixela.Bool(pod),
-		})
+		gd := &pixela.GraphDefinition{
+			ID:                  pixela.GraphID(id),
+			Name:                name,
+			Unit:                unit,
+			Type:                pixela.GraphType(gtype),
+			Color:               pixela.GraphColor(color),
+			TimeZone:            timezone,
+			SelfSufficient:      pixela.SelfSufficientType(selfSufficient),
+			IsSecret:            is,
+			PublishOptionalData: pod,
+		}
+		_, err := c.UpdateGraph(ctx, gd)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -211,7 +212,7 @@ func resourceGraphUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	return resourceGraphRead(ctx, d, m)
 }
 
-func resourceGraphDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGraphDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*pixela.Client)
 
 	// Warning or errors can be collected in a slice type
@@ -219,7 +220,7 @@ func resourceGraphDelete(_ context.Context, d *schema.ResourceData, m interface{
 
 	graphID := d.Id()
 
-	r, err := c.Graph().Delete(&pixela.GraphDeleteInput{ID: pixela.String(graphID)})
+	r, err := c.DeleteGraph(ctx, pixela.GraphID(graphID))
 	if err != nil {
 		return diag.FromErr(err)
 	}

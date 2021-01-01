@@ -1,11 +1,12 @@
 package pixela
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
-	pixela "github.com/ebc-2in2crc/pixela4go"
+	"github.com/budougumi0617/pixela"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -53,10 +54,10 @@ func TestAccPixelaGraph_basic(t *testing.T) {
 
 func testAccCheckPixelaGraphValues(graph *pixela.GraphDefinition, name, color string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if graph.ID != name {
+		if string(graph.ID) != name {
 			return fmt.Errorf("bad active state, expected \"true\", got: %#v", graph.ID)
 		}
-		if graph.Color != color {
+		if string(graph.Color) != color {
 			return fmt.Errorf("bad name, expected \"%s\", got: %#v", name, graph.Color)
 		}
 		return nil
@@ -74,9 +75,7 @@ func testAccCheckPixelaGraphExists(n string, graph *pixela.GraphDefinition) reso
 
 		// retrieve the configured client from the test setup
 		conn := testAccProvider.Meta().(*pixela.Client)
-		resp, err := conn.Graph().Get(&pixela.GraphGetInput{
-			ID: pixela.String(rs.Primary.ID),
-		})
+		resp, err := conn.GetGraph(context.Background(), pixela.GraphID(rs.Primary.ID))
 
 		if err != nil {
 			return err
@@ -122,20 +121,15 @@ resource "pixela_graph" "basic" {
 // testAccCheckPixelaGraphDestroy verifies the Widget has been destroyed
 func testAccCheckPixelaGraphDestroy(s *terraform.State) error {
 	cli := testAccProvider.Meta().(*pixela.Client)
+	ctx := context.Background()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "pixela_graph" {
 			continue
 		}
 
-		request := &pixela.GraphGetInput{ID: pixela.String(rs.Primary.ID)}
-
-		response, err := cli.Graph().Get(request)
+		_, err := cli.GetGraph(ctx, pixela.GraphID(rs.Primary.ID))
 		if err != nil {
-			return err
-		}
-
-		if response.IsSuccess {
 			return fmt.Errorf("Graph (%s) still exists.", rs.Primary.ID)
 		}
 
